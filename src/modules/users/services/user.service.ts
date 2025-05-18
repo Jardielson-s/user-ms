@@ -20,7 +20,20 @@ export class UserService {
   async create(data: Partial<UserEntity>): Promise<UserEntity> {
     try {
       const user = await this.repository.create(data);
-      await this.sqsProduce.sendToQueue('users', [user]);
+      const userIntegrations = {
+        name: user.name,
+        ein: user.ein,
+        email: user.email,
+        password: user.password,
+        phone: user.password,
+        postalCode: user.address.postalCode,
+        address: user.address.street,
+        addressNumber: user.address.addressNumber,
+        country: 'br',
+        city: 'any',
+        externalUserId: user._id,
+      };
+      await this.sqsProduce.sendToQueue('users', [userIntegrations]);
       return user;
     } catch (error: unknown) {
       if (error instanceof ConflictException) {
