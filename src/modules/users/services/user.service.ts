@@ -7,16 +7,20 @@ import {
 import { UserEntity } from '../entities/user.entity';
 import { isValidObjectId } from 'mongoose';
 import { UserRepository } from 'src/infra/mongoose/repositories/users/user.repository';
+import { SqsProduce } from 'src/infra/sqs/sqs.producer';
 
 export class UserService {
   constructor(
     @Inject(UserRepository)
     private readonly repository: UserRepository,
+    @Inject(SqsProduce)
+    private readonly sqsProduce: SqsProduce,
   ) {}
 
   async create(data: Partial<UserEntity>): Promise<UserEntity> {
     try {
       const user = await this.repository.create(data);
+      await this.sqsProduce.sendToQueue('users', [user]);
       return user;
     } catch (error: unknown) {
       if (error instanceof ConflictException) {
