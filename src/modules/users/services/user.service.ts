@@ -31,7 +31,7 @@ export class UserService {
         addressNumber: user.address.addressNumber,
         country: 'br',
         city: 'any',
-        externalUserId: user._id,
+        integrationId: user._id,
       };
       await this.sqsProduce.sendToQueue('users', [userIntegrations]);
       return user;
