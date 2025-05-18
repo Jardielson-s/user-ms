@@ -26,7 +26,7 @@ export class UserService {
         email: user.email,
         password: user.password,
         phone: user.password,
-        postalCode: user.address.postalCode,
+        postalCode: String(user.address.postalCode),
         address: user.address.street,
         addressNumber: user.address.addressNumber,
         country: 'br',
