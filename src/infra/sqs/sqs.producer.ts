@@ -13,6 +13,7 @@ export class SqsProduce {
         body: {
           entity,
           data: JSON.stringify(input),
+          service: 'user-ms',
         },
       });
     } catch (error) {
