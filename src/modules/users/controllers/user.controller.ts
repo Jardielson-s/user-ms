@@ -7,8 +7,8 @@ import {
   HttpStatus,
   Inject,
   Param,
+  Patch,
   Post,
-  Put,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UserService } from '../services/user.service';
@@ -36,7 +36,7 @@ export class UserController {
     return this.service.findOne(_id);
   }
 
-  @Put(':_id')
+  @Patch(':_id')
   update(@Param('_id') _id: string, @Body() dto: UpdateUserDto) {
     return this.service.update(_id, dto);
   }
