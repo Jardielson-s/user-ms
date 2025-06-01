@@ -6,7 +6,7 @@ export class CreateUserDto {
   @IsString()
   name: string;
 
-  @ApiProperty({ example: '0000000000', description: 'User ein' })
+  @ApiProperty({ example: '19699181010', description: 'User ein' })
   @IsString()
   ein: string;
 
