@@ -55,4 +55,8 @@ export class UserRepository {
   async count(filters: FilterQuery<UserModel>): Promise<number> {
     return this.userModel.countDocuments(filters).exec();
   }
+
+  async findOne(query: object) {
+    return this.userModel.findOne(query);
+  }
 }

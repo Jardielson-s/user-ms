@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Inject,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { UserEntity } from '../entities/user.entity';
@@ -19,6 +20,18 @@ export class UserService {
 
   async create(data: Partial<UserEntity>): Promise<UserEntity> {
     try {
+      const emailAlreadyExists = await this.repository.findOne({
+        email: data.email,
+      });
+      const einAlreadyExists = await this.repository.findOne({
+        ein: data.ein,
+      });
+      if (emailAlreadyExists || einAlreadyExists) {
+        const message = emailAlreadyExists
+          ? 'e-mail already exists'
+          : 'ein already exists';
+        throw new BadRequestException(message);
+      }
       const user = await this.repository.create(data);
       const userIntegrations = {
         name: user.name,
@@ -36,10 +49,10 @@ export class UserService {
       await this.sqsProduce.sendToQueue('users', [userIntegrations]);
       return user;
     } catch (error: unknown) {
-      if (error instanceof ConflictException) {
+      if (error instanceof BadRequestException) {
         throw error;
       }
-      throw new BadRequestException('Erro desconhecido');
+      throw new InternalServerErrorException();
     }
   }
 
