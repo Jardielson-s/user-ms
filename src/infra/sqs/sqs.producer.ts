@@ -14,6 +14,7 @@ export class SqsProduce {
           entity,
           data: JSON.stringify(input),
           service: 'user-ms',
+          operation: 'I',
         },
       });
     } catch (error) {
