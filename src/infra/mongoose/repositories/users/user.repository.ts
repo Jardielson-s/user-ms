@@ -59,4 +59,8 @@ export class UserRepository {
   async findOne(query: object) {
     return this.userModel.findOne(query);
   }
+
+  async upsert(docs) {
+    return this.userModel.bulkWrite(docs);
+  }
 }

@@ -9,6 +9,7 @@ import { UserEntity } from '../entities/user.entity';
 import { isValidObjectId } from 'mongoose';
 import { UserRepository } from 'src/infra/mongoose/repositories/users/user.repository';
 import { SqsProduce } from 'src/infra/sqs/sqs.producer';
+import { UserModel } from 'src/infra/mongoose/models/users/user.model';
 
 export class UserService {
   constructor(
@@ -49,6 +50,62 @@ export class UserService {
       await this.sqsProduce.sendToQueue('users', [userIntegrations]);
       return user;
     } catch (error: unknown) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async upsert(data: any[]): Promise<{
+    errors: object;
+    bulkOps: object;
+  }> {
+    try {
+      const errors: Array<{ message: string; entity: Partial<UserModel> }> = [];
+      const bulkOps = [];
+      for (const input of data) {
+        const emailAlreadyExists = await this.repository.findOne({
+          email: input.email,
+          ...(input._id ? { _id: { $ne: input._id } } : {}),
+        });
+        if (emailAlreadyExists) {
+          errors.push({
+            message: 'Email already exists',
+            entity: input,
+          });
+          continue;
+          // return { bulkOps: [], errors: errors };
+        }
+        const einAlreadyExists = await this.repository.findOne({
+          ein: input.ein,
+          ...(input._id ? { _id: { $ne: input._id } } : {}),
+        });
+        if (einAlreadyExists) {
+          errors.push({
+            message: 'Ein already exists',
+            entity: input,
+          });
+          continue;
+          // return { bulkOps: [], errors: errors };
+        }
+
+        // upsert.push(input);
+        bulkOps.push({
+          updateOne: {
+            filter: { _id: input._id },
+            update: { $set: input },
+            upsert: true,
+          },
+        });
+      }
+
+      if (bulkOps.length) {
+        await this.repository.upsert(bulkOps);
+      }
+      return { errors, bulkOps };
+    } catch (error: unknown) {
+      console.log(error);
       if (error instanceof BadRequestException) {
         throw error;
       }

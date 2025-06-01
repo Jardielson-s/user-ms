@@ -14,6 +14,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { UserService } from '../services/user.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
+import { UpsertUsers } from '../dto/upsert-user.dto';
 
 ApiTags('users');
 @Controller('users')
@@ -34,6 +35,11 @@ export class UserController {
   @Get(':_id')
   findOne(@Param('_id') _id: string) {
     return this.service.findOne(_id);
+  }
+
+  @Patch('')
+  updateMany(@Body() dto: UpsertUsers) {
+    return this.service.upsert(dto.data);
   }
 
   @Patch(':_id')
