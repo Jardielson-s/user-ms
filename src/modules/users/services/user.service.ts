@@ -96,7 +96,7 @@ export class UserService {
         }
 
         // upsert.push(input);
-        input._id = input?._id ?? new Types.ObjectId();
+        input._id = new Types.ObjectId(input?._id) ?? new Types.ObjectId();
         bulkOps.push({
           updateOne: {
             filter: { _id: input._id },
