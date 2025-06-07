@@ -68,7 +68,9 @@ export class UserService {
       for (const input of data) {
         const emailAlreadyExists = await this.repository.findOne({
           email: input.email,
-          ...(input._id ? { _id: { $ne: input._id } } : {}),
+          ...(input._id
+            ? { _id: { $ne: new Types.ObjectId(input?._id) } }
+            : {}),
         });
         if (emailAlreadyExists) {
           errors.push({
@@ -80,7 +82,9 @@ export class UserService {
         }
         const einAlreadyExists = await this.repository.findOne({
           ein: input.ein,
-          ...(input._id ? { _id: { $ne: input._id } } : {}),
+          ...(input._id
+            ? { _id: { $ne: new Types.ObjectId(input?._id) } }
+            : {}),
         });
         if (einAlreadyExists) {
           errors.push({
