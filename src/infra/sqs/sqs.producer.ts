@@ -6,7 +6,7 @@ import { v4 } from 'uuid';
 export class SqsProduce {
   constructor(private readonly sqsService: SqsService) {}
 
-  async sendToQueue(entity: string, input: any) {
+  async sendToQueue(entity: string, input: any, operation = null) {
     try {
       await this.sqsService.send(String(process.env.AWS_SQS_QUEUE_NAME), {
         id: v4(),
@@ -14,7 +14,7 @@ export class SqsProduce {
           entity,
           data: JSON.stringify(input),
           service: 'user-ms',
-          operation: 'I',
+          operation: operation ?? 'I',
         },
       });
     } catch (error) {

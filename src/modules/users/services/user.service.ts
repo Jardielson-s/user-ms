@@ -10,6 +10,7 @@ import { isValidObjectId, Types } from 'mongoose';
 import { UserRepository } from 'src/infra/mongoose/repositories/users/user.repository';
 import { SqsProduce } from 'src/infra/sqs/sqs.producer';
 import { UserModel } from 'src/infra/mongoose/models/users/user.model';
+import { randomUUID } from 'crypto';
 
 export class UserService {
   constructor(
@@ -140,7 +141,23 @@ export class UserService {
           'ID inválido: o valor fornecido não é um ObjectId',
         );
       }
-      return await this.repository.update(_id, updateData);
+      const user = await this.repository.update(_id, updateData);
+      const userIntegrations = {
+        id: user?.externalId ?? randomUUID(),
+        name: user.name,
+        ein: user.ein,
+        email: user.email,
+        password: user.password,
+        phone: user.password,
+        postalCode: String(user.address.postalCode),
+        address: user.address.street,
+        addressNumber: user.address.addressNumber,
+        country: 'br',
+        city: 'any',
+        integrationId: user._id,
+      };
+      await this.sqsProduce.sendToQueue('users', [userIntegrations], 'U');
+      return user;
     } catch (error: unknown) {
       if (error instanceof ConflictException) {
         throw error;
