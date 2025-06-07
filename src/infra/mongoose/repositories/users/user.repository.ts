@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, FilterQuery } from 'mongoose';
+import { Model, FilterQuery, Types } from 'mongoose';
 import { UserModel } from '../../models/users/user.model';
 import { UserEntity } from 'src/modules/users/entities/user.entity';
 
@@ -39,7 +39,7 @@ export class UserRepository {
 
   async update(id: string, vehicle: Partial<UserModel>): Promise<UserModel> {
     const updated = await this.userModel
-      .findByIdAndUpdate(id, vehicle, { new: true })
+      .findByIdAndUpdate(new Types.ObjectId(id), vehicle, { new: true })
       .exec();
 
     if (!updated) throw new NotFoundException('Usuário não encontrado');
