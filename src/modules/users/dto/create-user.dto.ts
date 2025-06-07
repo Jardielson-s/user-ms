@@ -9,7 +9,7 @@ export class CreateUserDto {
   })
   @IsOptional()
   @IsString()
-  _id: string;
+  _id;
 
   @ApiProperty({ example: 'Jonh joe', description: 'User name' })
   @IsString()
@@ -41,4 +41,13 @@ export class CreateUserDto {
   })
   @IsObject()
   address: { street: string; addressNumber: string; postalCode: number };
+
+  @ApiProperty({
+    type: String,
+    description: 'User external id',
+    example: 'e5d6ba19-7188-4895-9a0d-659dc1d7e5c5',
+  })
+  @IsOptional()
+  @IsString()
+  externalId: string;
 }

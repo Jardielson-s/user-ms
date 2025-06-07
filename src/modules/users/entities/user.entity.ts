@@ -1,5 +1,8 @@
+import { Types } from 'mongoose';
+
 export class UserEntity {
-  readonly _id: unknown;
+  readonly _id: Types.ObjectId;
+  externalId?: string;
   name: string;
   ein: string;
   password: string;

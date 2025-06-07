@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { UserEntity } from '../entities/user.entity';
-import { isValidObjectId } from 'mongoose';
+import { isValidObjectId, Types } from 'mongoose';
 import { UserRepository } from 'src/infra/mongoose/repositories/users/user.repository';
 import { SqsProduce } from 'src/infra/sqs/sqs.producer';
 import { UserModel } from 'src/infra/mongoose/models/users/user.model';
@@ -91,6 +91,7 @@ export class UserService {
         }
 
         // upsert.push(input);
+        input._id = input?._id ?? new Types.ObjectId();
         bulkOps.push({
           updateOne: {
             filter: { _id: input._id },

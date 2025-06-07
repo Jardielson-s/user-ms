@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 export class Address {
   @Prop({ required: true, unique: true })
@@ -12,6 +12,12 @@ export class Address {
 
 @Schema({ timestamps: true })
 export class UserModel extends Document {
+  @Prop()
+  _id: Types.ObjectId;
+
+  @Prop({ required: false, unique: true })
+  externalId?: string;
+
   @Prop({ required: true })
   name: string;
 
