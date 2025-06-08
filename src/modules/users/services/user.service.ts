@@ -36,9 +36,11 @@ export class UserService {
       }
       const user = await this.repository.create({
         _id: new Types.ObjectId(),
+        externalId: data?.externalId ?? randomUUID(),
         ...data,
       });
       const userIntegrations = {
+        id: user?.externalId ?? randomUUID(),
         name: user.name,
         ein: user.ein,
         email: user.email,
