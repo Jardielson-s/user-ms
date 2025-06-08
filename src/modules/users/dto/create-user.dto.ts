@@ -50,4 +50,8 @@ export class CreateUserDto {
   @IsOptional()
   @IsString()
   externalId: string;
+
+  @IsOptional()
+  @IsString()
+  external_application: string;
 }
