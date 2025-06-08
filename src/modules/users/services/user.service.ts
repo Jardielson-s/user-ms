@@ -88,7 +88,7 @@ export class UserService {
           ein: input.ein,
           ...(input._id
             ? { _id: { $ne: new Types.ObjectId(input?._id) } }
-            : {}),
+            : { externalId: { $ne: input.externalId } }),
         });
         if (einAlreadyExists) {
           errors.push({
