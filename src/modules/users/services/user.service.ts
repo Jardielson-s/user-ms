@@ -74,7 +74,7 @@ export class UserService {
           email: input.email,
           ...(input._id
             ? { _id: { $ne: new Types.ObjectId(input?._id) } }
-            : {}),
+            : { externalId: { $ne: input.externalId } }),
         });
         if (emailAlreadyExists) {
           errors.push({
