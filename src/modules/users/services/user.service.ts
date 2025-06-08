@@ -34,7 +34,10 @@ export class UserService {
           : 'ein already exists';
         throw new BadRequestException(message);
       }
-      const user = await this.repository.create(data);
+      const user = await this.repository.create({
+        _id: new Types.ObjectId(),
+        ...data,
+      });
       const userIntegrations = {
         name: user.name,
         ein: user.ein,
@@ -51,6 +54,7 @@ export class UserService {
       await this.sqsProduce.sendToQueue('users', [userIntegrations]);
       return user;
     } catch (error: unknown) {
+      console.log(error);
       if (error instanceof BadRequestException) {
         throw error;
       }
@@ -163,6 +167,7 @@ export class UserService {
       await this.sqsProduce.sendToQueue('users', [userIntegrations], 'U');
       return user;
     } catch (error: unknown) {
+      console.log(error);
       if (error instanceof ConflictException) {
         throw error;
       }
