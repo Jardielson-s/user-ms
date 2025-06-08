@@ -100,10 +100,13 @@ export class UserService {
         }
 
         // upsert.push(input);
+        const filter = input?._id
+          ? { _id: input._id }
+          : { externalId: input?.externalId };
         input._id = new Types.ObjectId(input?._id) ?? new Types.ObjectId();
         bulkOps.push({
           updateOne: {
-            filter: { _id: input._id },
+            filter,
             update: { $set: input },
             upsert: true,
           },
