@@ -101,7 +101,7 @@ export class UserService {
 
         // upsert.push(input);
         const filter = input?._id
-          ? { _id: input._id }
+          ? { _id: new Types.ObjectId(input?._id) }
           : { externalId: input?.externalId };
         input._id = new Types.ObjectId(input?._id) ?? new Types.ObjectId();
         bulkOps.push({
